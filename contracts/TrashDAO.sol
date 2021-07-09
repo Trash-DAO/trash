@@ -1,17 +1,27 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
-contract TrashDAO is Ownable, IERC721Receiver, ERC20("TRASH", "$TRASH") {
-    constructor() {}
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-    //Mint 1 $TRASH per NFT sent in, supports ERC721 and ERC1155
+contract TrashDAO is
+    Initializable,
+    ERC20Upgradeable,
+    OwnableUpgradeable,
+    IERC721ReceiverUpgradeable
+{
+    function initialize() public initializer {
+        __Ownable_init();
+        __ERC20_init("TRASH", "$TRASH");
+    }
+
+    //Mint 1 $TRASH per NFT sent in, supports ERC721
     function onERC721Received(
         address operator,
         address,
@@ -39,6 +49,6 @@ contract TrashDAO is Ownable, IERC721Receiver, ERC20("TRASH", "$TRASH") {
         address _to,
         uint256 _tokenId
     ) internal {
-        IERC721(nftAddress).transferFrom(_from, _to, _tokenId);
+        IERC721Upgradeable(nftAddress).transferFrom(_from, _to, _tokenId);
     }
 }
